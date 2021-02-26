@@ -21,12 +21,16 @@ namespace battle
                 .ForEach((
                     Entity unit,
                     int entityInQueryIndex,
-                    ref Health health,
-                    ref Child child) =>
+                    ref Health health) =>
                 {
                     if (health.Value <= 0)
                     {
                         ecb.DestroyEntity(entityInQueryIndex, unit);
+                        var children = GetBuffer<Child>(unit);
+                        foreach (var child in children)
+                        {
+                            ecb.DestroyEntity(entityInQueryIndex, child.Value);
+                        }
 
                     }
                 }).Schedule(Dependency);
